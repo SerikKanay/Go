@@ -47,5 +47,22 @@ func (b *BookController) CreateBook(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, newBook)
-
+}
+func (b BookController) UpdateBook(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	var newBook *models.Book
+	if err := c.ShouldBindJSON(&newBook); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+	update, err := b.service.Update(id, newBook)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"book": update})
 }

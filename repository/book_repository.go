@@ -21,6 +21,13 @@ func (b BookRepositoryImpl) FindAll() ([]models.Book, error) {
 	err := b.db.Find(&book).Error
 	return book, err
 }
-func (b BookRepositoryImpl) Deleted(id int) error {
+func (b BookRepositoryImpl) Delete(id int) error {
 	return b.db.Delete(&models.Book{}, id).Error
+}
+func (b BookRepositoryImpl) Update(id int, newBook *models.Book) error {
+	result := b.db.Model(&models.Book{}).Where("id=?", id).Omit("id,CreatedAt").Updates(newBook)
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	return result.Error
 }

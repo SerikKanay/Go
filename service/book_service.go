@@ -6,6 +6,7 @@ type BookRepository interface {
 	Create(book *models.Book) error
 	FindAll() ([]models.Book, error)
 	Delete(id int) error
+	Update(id int, newBook *models.Book) error
 }
 type BookService struct {
 	repo BookRepository
@@ -25,6 +26,13 @@ func (b *BookService) Create(title, author string) (*models.Book, error) {
 	err := b.repo.Create(book)
 	return book, err
 }
-func (b *BookService) DeleteBook(bookId int) error {
-	return b.repo.Delete(bookId)
+func (b *BookService) DeleteBook(id int) error {
+	return b.repo.Delete(id)
+}
+func (b *BookService) Update(id int, newBook *models.Book) (*models.Book, error) {
+	err := b.repo.Update(id, newBook)
+	if err != nil {
+		return nil, err
+	}
+	return newBook, nil
 }

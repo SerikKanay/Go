@@ -21,5 +21,6 @@ func main() {
 	r.GET("/book", bookController.GetAllBook)
 	r.POST("/book", bookController.CreateBook)
 	r.DELETE("/book/:id", bookController.Delete)
+	r.PUT("/book/:id", bookController.UpdateBook)
 	r.Run()
 }
