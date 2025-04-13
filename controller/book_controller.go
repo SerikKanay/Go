@@ -19,6 +19,19 @@ type BookController struct {
 func (b *BookController) GetAllBook(c *gin.Context) {
 	book, _ := b.service.GetAll()
 	c.JSON(http.StatusOK, book)
+}
+func (b *BookController) FindById(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id"})
+		return
+	}
+	book, err := b.service.GetById(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Book not found"})
+		return
+	}
+	c.JSON(http.StatusOK, book)
 
 }
 func (b *BookController) Delete(c *gin.Context) {
@@ -31,7 +44,7 @@ func (b *BookController) Delete(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Not found"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"success": "Student deleted successfuly"})
+	c.JSON(http.StatusOK, gin.H{"success": "book deleted successfuly"})
 }
 
 func (b *BookController) CreateBook(c *gin.Context) {

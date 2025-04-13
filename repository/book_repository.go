@@ -21,6 +21,12 @@ func (b BookRepositoryImpl) FindAll() ([]models.Book, error) {
 	err := b.db.Find(&book).Error
 	return book, err
 }
+
+func (b BookRepositoryImpl) FindById(id int) (*models.Book, error) {
+	var book models.Book
+	err := b.db.First(&book, id).Error
+	return &book, err
+}
 func (b BookRepositoryImpl) Delete(id int) error {
 	return b.db.Delete(&models.Book{}, id).Error
 }

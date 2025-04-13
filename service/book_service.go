@@ -5,6 +5,7 @@ import "rest-api/models"
 type BookRepository interface {
 	Create(book *models.Book) error
 	FindAll() ([]models.Book, error)
+	FindById(id int) (*models.Book, error)
 	Delete(id int) error
 	Update(id int, newBook *models.Book) error
 }
@@ -17,6 +18,9 @@ func NewBookService(bookRepo BookRepository) *BookService {
 }
 func (b *BookService) GetAll() ([]models.Book, error) {
 	return b.repo.FindAll()
+}
+func (b *BookService) GetById(id int) (*models.Book, error) {
+	return b.repo.FindById(id)
 }
 func (b *BookService) Create(title, author string) (*models.Book, error) {
 	book := &models.Book{
