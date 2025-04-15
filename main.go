@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"rest-api/config"
+	"rest-api/config/auth"
 	"rest-api/controller"
 	_ "rest-api/models"
 	"rest-api/repository"
@@ -11,14 +12,15 @@ import (
 
 func main() {
 
-	db := config.DbConnect()
+	config.DbConnect()
 	r := gin.Default()
-	bookRepo := repository.NewBookRepository(db)
+	bookRepo := repository.NewBookRepository(config.DB)
 	bookService := service.NewBookService(bookRepo)
 	bookController := controller.NewBook(bookService)
-
+	r.POST("/login", auth.Login)
+	r.POST("register", auth.Register)
 	r.GET("/book", bookController.GetAllBook)
-	r.GET("book/:id", bookController.FindById)
+	r.GET("/book/:id", bookController.FindById)
 	r.POST("/book", bookController.CreateBook)
 	r.DELETE("/book/:id", bookController.Delete)
 	r.PUT("/book/:id", bookController.UpdateBook)

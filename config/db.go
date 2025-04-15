@@ -10,7 +10,9 @@ import (
 	"log"
 )
 
-func DbConnect() *gorm.DB {
+var DB *gorm.DB
+
+func DbConnect() {
 	dsn := "host=localhost user=postgres password=test dbname=go-rest-api port=5432 sslmode=disable"
 	sqlDb, err := sql.Open("postgres", dsn)
 	if err != nil {
@@ -35,5 +37,5 @@ func DbConnect() *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return gormDB
+	DB = gormDB
 }

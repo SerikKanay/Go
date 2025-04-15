@@ -41,10 +41,10 @@ func (b *BookController) Delete(c *gin.Context) {
 		return
 	}
 	if err := b.service.DeleteBook(id); err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"success": "book deleted successfuly"})
+	c.JSON(http.StatusOK, gin.H{"success": "book deleted successful"})
 }
 
 func (b *BookController) CreateBook(c *gin.Context) {
@@ -55,7 +55,7 @@ func (b *BookController) CreateBook(c *gin.Context) {
 	}
 	newBook, err := b.service.Create(book.Title, book.Author)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create post"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create book"})
 		return
 	}
 
@@ -69,7 +69,7 @@ func (b BookController) UpdateBook(c *gin.Context) {
 	}
 	var newBook *models.Book
 	if err := c.ShouldBindJSON(&newBook); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request "})
 		return
 	}
 	update, err := b.service.Update(id, newBook)
