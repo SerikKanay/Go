@@ -11,6 +11,10 @@ import (
 	"rest-api/service"
 )
 
+func init() {
+	config.LoadEnv()
+}
+
 func main() {
 
 	config.DbConnect()

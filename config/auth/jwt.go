@@ -3,10 +3,11 @@ package auth
 import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"os"
 	"time"
 )
 
-var secret = []byte("secretKey")
+//var secret = []byte("secretKey")
 
 func GenerateJwt(username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
@@ -14,7 +15,7 @@ func GenerateJwt(username string) (string, error) {
 			"username": username,
 			"exp":      time.Now().Add(time.Hour * 24).Unix(),
 		})
-	tokenString, err := token.SignedString(secret)
+	tokenString, err := token.SignedString(os.Getenv("SECRET_KEY"))
 	if err != nil {
 		return "", err
 	}
@@ -23,7 +24,7 @@ func GenerateJwt(username string) (string, error) {
 
 func VerifyToken(tokenString string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return secret, nil
+		return []byte(os.Getenv("SECRET_KEY")), nil
 	})
 	if err != nil {
 		return nil, err
