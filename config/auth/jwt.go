@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-var secret = []byte("secret")
+var secret = []byte("secretKey")
 
 func GenerateJwt(username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
@@ -21,15 +21,15 @@ func GenerateJwt(username string) (string, error) {
 	return tokenString, nil
 }
 
-func verifyToken(tokenString string) error {
-	token, err := jwt.Parse(tokenString, func(toke *jwt.Token) (interface{}, error) {
+func VerifyToken(tokenString string) (*jwt.Token, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return secret, nil
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if !token.Valid {
-		return fmt.Errorf("Invalid token")
+		return nil, fmt.Errorf("invalid token")
 	}
-	return nil
+	return token, nil
 }
