@@ -27,7 +27,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Login or Password error"})
 		return
 	}
-	token, _ := GenerateJwt(u.Username)
+	token, _ := GenerateJwt(u.Id)
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 func Register(c *gin.Context) {

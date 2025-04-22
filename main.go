@@ -11,10 +11,6 @@ import (
 	"rest-api/service"
 )
 
-func init() {
-	config.LoadEnv()
-}
-
 func main() {
 
 	config.DbConnect()
@@ -24,11 +20,12 @@ func main() {
 	bookController := controller.NewBook(bookService)
 	r.Use(middleware.LoggingMiddleware())
 	r.POST("/login", auth.Login)
-	r.POST("register", auth.Register)
+	r.POST("/register", auth.Register)
 	r.GET("/book", middleware.AuthMiddleware(), bookController.GetAllBook)
 	r.GET("/book/:id", bookController.FindById)
 	r.POST("/book", bookController.CreateBook)
 	r.DELETE("/book/:id", bookController.Delete)
 	r.PUT("/book/:id", bookController.UpdateBook)
+
 	r.Run()
 }

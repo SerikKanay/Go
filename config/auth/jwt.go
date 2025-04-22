@@ -7,17 +7,23 @@ import (
 	"time"
 )
 
-//var secret = []byte("secretKey")
-
-func GenerateJwt(username string) (string, error) {
+func Generate(userID uint) (string, error) {
+	claims := jwt.MapClaims{
+		"user_id": userID,
+		"exp":     time.Now().Add(time.Hour * 24).Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(os.Getenv("SECRET")))
+}
+func GenerateJwt(userId uint) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
-			"username": username,
-			"exp":      time.Now().Add(time.Hour * 24).Unix(),
+			"user_id": userId,
+			"exp":     time.Now().Add(time.Hour * 24).Unix(),
 		})
-	tokenString, err := token.SignedString(os.Getenv("SECRET_KEY"))
+	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET_KEY")))
 	if err != nil {
-		return "", err
+		return "error", err
 	}
 	return tokenString, nil
 }

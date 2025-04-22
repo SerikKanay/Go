@@ -16,7 +16,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		tokenString := strings.TrimSpace(strings.TrimPrefix(authHeader, "Bearer"))
+		tokenString := strings.TrimSpace(strings.TrimPrefix(authHeader, "Bearer "))
 		token, err := auth.VerifyToken(tokenString)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
