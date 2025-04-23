@@ -18,6 +18,10 @@ func main() {
 	bookRepo := repository.NewBookRepository(config.DB)
 	bookService := service.NewBookService(bookRepo)
 	bookController := controller.NewBook(bookService)
+	userRepo := repository.NewUserRepository(config.DB)
+	userService := service.NewUserService(userRepo)
+	userController := controller.NewUserController(userService)
+
 	r.Use(middleware.LoggingMiddleware())
 	r.POST("/login", auth.Login)
 	r.POST("/register", auth.Register)
@@ -26,6 +30,7 @@ func main() {
 	r.POST("/book", bookController.CreateBook)
 	r.DELETE("/book/:id", bookController.Delete)
 	r.PUT("/book/:id", bookController.UpdateBook)
-
+	r.GET("/users", userController.GetUser)
+	r.DELETE("/users/:id", userController.DeleteUser)
 	r.Run()
 }

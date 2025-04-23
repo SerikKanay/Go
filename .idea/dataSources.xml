@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="go-rest-api@localhost" uuid="7c209a2c-663d-446c-aa8d-44e48d2d2fbc">
+    <data-source source="LOCAL" name="go-rest-api@localhost" uuid="c810a6be-5d2b-4b96-88f8-f7c62399b384">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
