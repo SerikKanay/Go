@@ -1,9 +1,8 @@
 version: '3.8'
 
 services:
-  my_postgres_db:
-    image: postgres:17.4-alpine
-    container_name: go-postgres
+  db:
+    image: postgres:15
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -12,25 +11,28 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - go-network
 
-  my-item-service:
-    depends_on:
-      - my_postgres_db
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: 'my-item-service-iso'
-    container_name: 'my-item-service-container'
+  app:
+    build: .
+    ports:
+      - "8080:8080"
     environment:
-      DB_HOST: my_postgres_db
+      DB_HOST: db
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: test
       DB_NAME: go-rest-api
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./config/migrations:/app/config/migrations
+    depends_on:
+      - db
+    networks:
+      - go-network
+
 volumes:
-  postgres_data:
+  db_data:
+
+networks:
+  go-network:
+    driver: bridge

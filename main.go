@@ -6,31 +6,42 @@ import (
 	"rest-api/config/auth"
 	"rest-api/controller"
 	"rest-api/middleware"
-	_ "rest-api/models"
 	"rest-api/repository"
 	"rest-api/service"
 )
 
 func main() {
-
 	config.DbConnect()
-	r := gin.Default()
+
 	bookRepo := repository.NewBookRepository(config.DB)
 	bookService := service.NewBookService(bookRepo)
-	bookController := controller.NewBook(bookService)
+	bookCtrl := controller.NewBook(bookService)
+
 	userRepo := repository.NewUserRepository(config.DB)
 	userService := service.NewUserService(userRepo)
-	userController := controller.NewUserController(userService)
+	userCtrl := controller.NewUserController(userService)
 
-	r.Use(middleware.LoggingMiddleware())
+	r := gin.Default()
+	r.Use(middleware.LoggingMiddleware(), middleware.CORSMiddleware())
+
 	r.POST("/login", auth.Login)
 	r.POST("/register", auth.Register)
-	r.GET("/book", middleware.AuthMiddleware(), bookController.GetAllBook)
-	r.GET("/book/:id", bookController.FindById)
-	r.POST("/book", bookController.CreateBook)
-	r.DELETE("/book/:id", bookController.Delete)
-	r.PUT("/book/:id", bookController.UpdateBook)
-	r.GET("/users", userController.GetUser)
-	r.DELETE("/users/:id", userController.DeleteUser)
+
+	userRoutes := r.Group("/user", middleware.AuthMiddleware())
+	{
+		userRoutes.GET("/books", bookCtrl.GetAllBook)
+		userRoutes.GET("/books/:id", bookCtrl.FindById)
+	}
+
+	adminRoutes := r.Group("/admin", middleware.AdminMiddleware())
+	{
+		adminRoutes.POST("/books", bookCtrl.CreateBook)
+		adminRoutes.GET("/books", bookCtrl.GetAllBook)
+		adminRoutes.PUT("/books/:id", bookCtrl.UpdateBook)
+		adminRoutes.DELETE("/books/:id", bookCtrl.Delete)
+		adminRoutes.GET("/users", userCtrl.GetUser)
+		adminRoutes.DELETE("/users/:id", userCtrl.DeleteUser)
+	}
+
 	r.Run()
 }

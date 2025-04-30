@@ -20,38 +20,42 @@ func DbConnect() {
 		log.Println("No .env file found, relying on system environment")
 	}
 
-	databaseName := "postgres"
 	dbHost := os.Getenv("DB_HOST")
 	dbName := os.Getenv("DB_NAME")
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASSWORD")
 	dbPort := os.Getenv("DB_PORT")
 	sslmode := "disable"
-	dbUrl := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", dbUser, dbPass, dbHost, dbPort, dbName, sslmode)
-	fmt.Println(dbUrl)
-	sqlDB, err := sql.Open(databaseName, dbUrl)
 
+	dbUrl := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", dbUser, dbPass, dbHost, dbPort, dbName, sslmode)
+	fmt.Println("Connecting to DB:", dbUrl)
+
+	sqlDB, err := sql.Open("postgres", dbUrl)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to open database:", err)
 	}
+
 	driver, err := migratepg.WithInstance(sqlDB, &migratepg.Config{})
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to create migrate driver:", err)
 	}
 
-	migrator, err := migrate.NewWithDatabaseInstance("file://config/migrations", "postgres", driver)
+	migrator, err := migrate.NewWithDatabaseInstance(
+		"file://config/migrations",
+		"postgres", driver)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to create migrator:", err)
 	}
 
 	if err := migrator.Up(); err != nil && err.Error() != "no change" {
-		log.Fatal(err)
+		log.Fatal("Failed to apply migrations:", err)
 	}
+
 	gormDB, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: sqlDB,
 	}), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to connect with GORM:", err)
 	}
 	DB = gormDB
 }

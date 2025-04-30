@@ -27,13 +27,14 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Login or Password error"})
 		return
 	}
-	token, _ := GenerateJwt(u.Id)
+	token, _ := GenerateJwt(u.Id, u.Role)
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 func Register(c *gin.Context) {
 	var req struct {
 		Username string `json:"username"`
 		Password string `json:"password"`
+		Role     string `json:"role"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil || req.Username == "" || req.Password == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad request"})
@@ -48,10 +49,17 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return
 	}
+	role := req.Role
+	if role == "" {
+		role = "user"
+	}
+
 	u := models.User{
 		Username: req.Username,
 		Password: string(hashedPassword),
+		Role:     role,
 	}
+
 	if err := config.DB.Create(&u).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
 		return
